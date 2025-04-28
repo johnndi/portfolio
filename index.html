@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullstack Developer & Technologist Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.min.js"></script>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #00cec9;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled {
+            background-color: rgba(45, 52, 54, 0.9);
+            padding: 15px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--light);
+            text-decoration: none;
+        }
+        
+        .logo span {
+            color: var(--primary);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            width: 50%;
+            z-index: 10;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero h1 span {
+            color: var(--primary);
+        }
+        
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.8;
+            max-width: 80%;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary);
+            color: var(--light);
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            margin-left: 15px;
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+        }
+        
+        /* 3D Animation Container */
+        .animation-container {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+        }
+        
+        /* About Section */
+        .section {
+            padding: 100px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-title h2 {
+            font-size: 36px;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+        
+        .about-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .about-text {
+            width: 60%;
+        }
+        
+        .about-text h3 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        
+        .about-text p {
+            margin-bottom: 20px;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+        
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .skill {
+            background-color: rgba(108, 92, 231, 0.1);
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin-right: 15px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            border: 1px solid var(--primary);
+        }
+        
+        .about-image {
+            width: 35%;
+            position: relative;
+            height: 400px;
+        }
+        
+        /* Profile Image */
+        .profile-img {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--primary);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+        
+        /* Networking Elements */
+        .network-node {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            z-index: 5;
+        }
+        
+        .network-line {
+            position: absolute;
+            background-color: rgba(0, 206, 201, 0.3);
+            height: 2px;
+            transform-origin: left center;
+            z-index: 4;
+        }
+        
+        /* Projects Section */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .project-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            height: 300px;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .project-image {
+            height: 60%;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .project-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .project-card:hover .project-image img {
+            transform: scale(1.1);
+        }
+        
+        .project-info {
+            padding: 20px;
+        }
+        
+        .project-info h3 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        
+        .project-info p {
+            opacity: 0.7;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .project-links a {
+            color: var(--light);
+            margin-right: 15px;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .project-links a:hover {
+            color: var(--primary);
+        }
+        
+        /* Contact Section */
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 5px;
+            color: var(--light);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .form-group textarea {
+            height: 150px;
+            resize: none;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 30px 0;
+            text-align: center;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            opacity: 0.7;
+            font-size: 14px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-content {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .hero p {
+                max-width: 100%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            .animation-container {
+                display: none;
+            }
+            
+            .about-content {
+                flex-direction: column;
+            }
+            
+            .about-text, .about-image {
+                width: 100%;
+            }
+            
+            .about-image {
+                margin-top: 50px;
+                height: 300px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+            }
+            
+            .section-title h2 {
+                font-size: 30px;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">Portfo<span>lio.</span></a>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Hi, I'm <span>john ndirangu</span><br>Fullstack Developer & Technologist</h1>
+                <p>I build exceptional digital experiences with modern technologies. Specializing in cloud architecture, networking, and fullstack development.</p>
+                <a href="#projects" class="btn">View My Work</a>
+                <a href="#contact" class="btn btn-outline">Hire Me</a>
+            </div>
+        </div>
+        <div class="animation-container" id="3d-animation"></div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>About Me</h2>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Fullstack Developer & Computer Technologist</h3>
+                    <p>With over 5 years of experience in web development and network architecture, I've designed and implemented solutions ranging from small business applications to large-scale distributed systems.</p>
+                    <p>My expertise spans both software development and infrastructure, allowing me to create solutions that are not just functional but also optimized for performance, security, and scalability.</p>
+                    <div class="skills">
+                        <span class="skill">JavaScript/TypeScript</span>
+                        <span class="skill">React/Node.js</span>
+                        <span class="skill">Cloud Architecture</span>
+                        <span class="skill">Network Security</span>
+                        <span class="skill">Docker/Kubernetes</span>
+                        <span class="skill">AWS/GCP</span>
+                        <span class="skill">CI/CD Pipelines</span>
+                        <span class="skill">Database Design</span>
+                        <span class="skill">Microservices</span>
+                        <span class="skill">REST/GraphQL</span>
+                    </div>
+                </div>
+                <div class="about-image" id="about-animation">
+                    <!-- Replace with your actual image -->
+                    <img src="./logo-color.png" alt="Your Name" class="profile-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="section" id="projects">
+        <div class="container">
+            <div class="section-title">
+                <h2>My Projects</h2>
+            </div>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Project 1">
+                    </div>
+                    <div class="project-info">
+                        <h3>Cloud Network Dashboard</h3>
+                        <p>Real-time monitoring and management tool for cloud network infrastructure with security alerts.</p>
+                        <div class="project-links">
+                            <a href="#">Live Demo</a>
+                            <a href="#">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Project 2">
+                    </div>
+                    <div class="project-info">
+                        <h3>Distributed Task System</h3>
+                        <p>Fault-tolerant distributed computing platform with load balancing and auto-scaling.</p>
+                        <div class="project-links">
+                            <a href="#">Live Demo</a>
+                            <a href="#">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Project 3">
+                    </div>
+                    <div class="project-info">
+                        <h3>Secure API Gateway</h3>
+                        <p>Enterprise-grade API management solution with OAuth2 and rate limiting.</p>
+                        <div class="project-links">
+                            <a href="#">Live Demo</a>
+                            <a href="#">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section" id="contact">
+        <div class="container">
+            <div class="section-title">
+                <h2>Get In Touch</h2>
+            </div>
+            <div class="contact-form">
+                <form>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" required></textarea>
+                    </div>
+                    <button type="submit" class="btn submit-btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+            <p class="copyright">© 2023 Fullstack Developer & Technologist Portfolio. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
+    <!-- Main JavaScript -->
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Create networking nodes and connections
+        function createNetworkElements(container) {
+            const nodes = [];
+            const lines = [];
+            
+            // Create nodes
+            for (let i = 0; i < 12; i++) {
+                const node = document.createElement('div');
+                node.className = 'network-node';
+                
+                // Random position within container
+                const left = Math.random() * 80 + 10;
+                const top = Math.random() * 80 + 10;
+                
+                node.style.left = `${left}%`;
+                node.style.top = `${top}%`;
+                
+                container.appendChild(node);
+                nodes.push({ element: node, x: left, y: top });
+            }
+            
+            // Create connections between nodes
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    // Only connect some nodes (about 30% chance)
+                    if (Math.random() < 0.3) {
+                        const line = document.createElement('div');
+                        line.className = 'network-line';
+                        
+                        const node1 = nodes[i];
+                        const node2 = nodes[j];
+                        
+                        // Calculate distance and angle between nodes
+                        const dx = node2.x - node1.x;
+                        const dy = node2.y - node1.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                        
+                        // Position and style the line
+                        line.style.width = `${distance}%`;
+                        line.style.left = `${node1.x}%`;
+                        line.style.top = `${node1.y}%`;
+                        line.style.transform = `rotate(${angle}deg)`;
+                        
+                        container.appendChild(line);
+                        lines.push(line);
+                    }
+                }
+            }
+            
+            // Animate nodes
+            function animateNodes() {
+                nodes.forEach(node => {
+                    // Small random movement
+                    node.x += (Math.random() - 0.5) * 0.2;
+                    node.y += (Math.random() - 0.5) * 0.2;
+                    
+                    // Keep within bounds
+                    node.x = Math.max(5, Math.min(95, node.x));
+                    node.y = Math.max(5, Math.min(95, node.y));
+                    
+                    node.element.style.left = `${node.x}%`;
+                    node.element.style.top = `${node.y}%`;
+                });
+                
+                requestAnimationFrame(animateNodes);
+            }
+            
+            animateNodes();
+        }
+        
+        // 3D Laptop Animation for Hero Section
+        const heroAnimation = () => {
+            const container = document.getElementById('3d-animation');
+            
+            // Scene
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x2d3436);
+            
+            // Camera
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 5;
+            camera.position.y = 1;
+            
+            // Renderer
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+            
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+            
+            // Laptop model (simplified with primitives)
+            const createLaptop = () => {
+                const group = new THREE.Group();
+                
+                // Base (bottom part)
+                const baseGeometry = new THREE.BoxGeometry(3, 0.2, 2);
+                const baseMaterial = new THREE.MeshStandardMaterial({ 
+                    color: 0x333333,
+                    metalness: 0.7,
+                    roughness: 0.3
+                });
+                const base = new THREE.Mesh(baseGeometry, baseMaterial);
+                base.position.y = -0.1;
+                group.add(base);
+                
+                // Screen (top part)
+                const screenGeometry = new THREE.BoxGeometry(2.8, 1.8, 0.05);
+                const screenMaterial = new THREE.MeshStandardMaterial({ 
+                    color: 0x111111,
+                    metalness: 0.8,
+                    roughness: 0.2
+                });
+                const screen = new THREE.Mesh(screenGeometry, screenMaterial);
+                screen.position.y = 1;
+                screen.position.z = -0.1;
+                group.add(screen);
+                
+                // Screen content (code display)
+                const codeCanvas = document.createElement('canvas');
+                codeCanvas.width = 1024;
+                codeCanvas.height = 720;
+                const ctx = codeCanvas.getContext('2d');
+                
+                // Code lines
+                const codeLines = [
+                    "// Fullstack Developer & Technologist",
+                    "function buildSolutions() {",
+                    "  const skills = ['JavaScript', 'React', 'Node.js'];",
+                    "  const infrastructure = ['AWS', 'Docker', 'K8s'];",
+                    "  ",
+                    "  return {",
+                    "    frontend: createUI(skills),",
+                    "    backend: buildAPI(skills),",
+                    "    deploy: configureCloud(infrastructure)",
+                    "  };",
+                    "}",
+                    "",
+                    "const myPortfolio = buildSolutions();"
+                ];
+                
+                function updateCodeDisplay() {
+                    ctx.fillStyle = '#1e1e1e';
+                    ctx.fillRect(0, 0, codeCanvas.width, codeCanvas.height);
+                    
+                    ctx.font = '24px Monaco, monospace';
+                    ctx.fillStyle = '#d4d4d4';
+                    
+                    codeLines.forEach((line, i) => {
+                        // Simple animation - scroll lines occasionally
+                        const scrollOffset = Math.floor(Math.random() * 3) - 1;
+                        const yPos = 40 + (i + scrollOffset) * 30;
+                        
+                        // Syntax highlighting
+                        if (line.includes('function') || line.includes('const')) {
+                            ctx.fillStyle = '#569cd6';
+                        } else if (line.includes('//')) {
+                            ctx.fillStyle = '#6a9955';
+                        } else if (line.includes("'")) {
+                            ctx.fillStyle = '#ce9178';
+                        } else {
+                            ctx.fillStyle = '#d4d4d4';
+                        }
+                        
+                        ctx.fillText(line, 20, yPos);
+                    });
+                    
+                    // Update texture
+                    codeTexture.needsUpdate = true;
+                }
+                
+                const codeTexture = new THREE.CanvasTexture(codeCanvas);
+                const codeMaterial = new THREE.MeshStandardMaterial({
+                    map: codeTexture,
+                    emissive: 0x111111,
+                    emissiveIntensity: 0.8
+                });
+                
+                const codeGeometry = new THREE.PlaneGeometry(2.6, 1.6);
+                const codeDisplay = new THREE.Mesh(codeGeometry, codeMaterial);
+                codeDisplay.position.y = 1;
+                codeDisplay.position.z = -0.2;
+                group.add(codeDisplay);
+                
+                // Hinge
+                const hingeGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1.5, 16);
+                const hingeMaterial = new THREE.MeshStandardMaterial({ 
+                    color: 0x555555,
+                    metalness: 0.9,
+                    roughness: 0.1
+                });
+                const hinge = new THREE.Mesh(hingeGeometry, hingeMaterial);
+                hinge.rotation.z = Math.PI / 2;
+                hinge.position.y = 0.5;
+                group.add(hinge);
+                
+                // Keyboard keys
+                for (let row = 0; row < 4; row++) {
+                    for (let col = 0; col < 10; col++) {
+                        const keyGeometry = new THREE.BoxGeometry(0.2, 0.02, 0.2);
+                        const keyMaterial = new THREE.MeshStandardMaterial({ 
+                            color: 0x222222,
+                            metalness: 0.5,
+                            roughness: 0.4
+                        });
+                        const key = new THREE.Mesh(keyGeometry, keyMaterial);
+                        key.position.x = (col - 4.5) * 0.25;
+                        key.position.y = 0.02;
+                        key.position.z = (row - 1.5) * 0.25;
+                        group.add(key);
+                    }
+                }
+                
+                // Trackpad
+                const trackpadGeometry = new THREE.BoxGeometry(1, 0.01, 0.8);
+                const trackpadMaterial = new THREE.MeshStandardMaterial({ 
+                    color: 0x111111,
+                    metalness: 0.8,
+                    roughness: 0.1
+                });
+                const trackpad = new THREE.Mesh(trackpadGeometry, trackpadMaterial);
+                trackpad.position.y = 0.03;
+                trackpad.position.z = 0.5;
+                group.add(trackpad);
+                
+                return { group, updateCodeDisplay };
+            };
+            
+            const { group, updateCodeDisplay } = createLaptop();
+            scene.add(group);
+            
+            // Animation
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Rotate laptop slightly
+                group.rotation.y += 0.005;
+                
+                // Update code display
+                if (Math.random() < 0.05) { // Only update occasionally
+                    updateCodeDisplay();
+                }
+                
+                renderer.render(scene, camera);
+            }
+            
+            // Handle resize
+            window.addEventListener('resize', function() {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+            
+            animate();
+        };
+        
+        // Initialize animations when page loads
+        window.addEventListener('load', function() {
+            heroAnimation();
+            createNetworkElements(document.getElementById('about-animation'));
+        });
+    </script>
+</body>
+</html>
